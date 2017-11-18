@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<annotation>
+	<folder>3-1</folder>
+	<filename>005.jpg</filename>
+	<path>005.jpg</path>
+	<source>
+		<database>VOC</database>
+		<annotation>PASCAL VOC2007</annotation>
+	</source>
+	<size>
+		<width>250</width>
+		<height>250</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>face</name>
+		<pose></pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>76</xmin>
+			<ymin>52</ymin>
+			<xmax>185</xmax>
+			<ymax>190</ymax>
+		</bndbox>
+	</object>
+</annotation>

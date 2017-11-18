@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<dataset>
+	<name>Face</name>
+	<year>2017</year>
+	<imagedir>images</imagedir>
+	<annotationdir>Annotations</annotationdir>
+	<labelsdir>labels</labelsdir>
+	<currentlabelingclass>face</currentlabelingclass>
+	<lastlabeledindex>0</lastlabeledindex>
+	<bsavexml>true</bsavexml>
+	<bsavetxt>true</bsavetxt>
+	<classes>
+		<class>face</class>
+	</classes>
+</dataset>
