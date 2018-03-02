@@ -14,7 +14,7 @@ public:
 	void initWithNames(const std::vector<std::string>&objnames);
 	int load_file(const string configpath);
 	void save_file(const string configpath);
-	int generatetrainvaltxt(const string datasetprefix="/home/yanhe/data/", const float trainratio = 0.7, const float valratio = 0.2, const float testratio = 0.1);
+	int generatetrainvaltxt(const float trainratio = 0.7, const float valratio = 0.2, const float testratio = 0.1);
 	string rootdir="./";
 	string datasetdir;
 	string configfile = "mrconfig.xml";

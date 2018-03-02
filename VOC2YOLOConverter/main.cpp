@@ -6,16 +6,18 @@
 
 void convert2ssdannotation(DatasetConfig &voc)
 {
-	vector<string>files = getAllFilesinDir(voc.datasetdir + "/");
+	vector<string>files = getAllFilesinDir(voc.datasetdir + "/Annotations");
 	AnnotationFile::set_labelmaps(voc.classes);
 	for (int imgindex = 0; imgindex < files.size(); imgindex++)
 	{
 		AnnotationFile af;
 		cout << files[imgindex] << endl;
-		string filepath = voc.datasetdir + "/" + voc.imagedir + "/" + files[imgindex];
+        string imgfilename = files[imgindex];
+        imgfilename = imgfilename.substr(0, imgfilename.length() - 3)+"png";
+		string filepath = voc.datasetdir + "/" + voc.imagedir + "/" + imgfilename;
 		string annotationfilepath = voc.datasetdir + "/" + voc.annotationdir + "/" + files[imgindex].substr(0, files[imgindex].length() - 4) + ".xml";
 		af.load_xml(annotationfilepath);
-		string newannopath = "labels/" + files[imgindex].substr(0, files[imgindex].length() - 4) + ".txt";
+		string newannopath = voc.datasetdir + "/labels/" + files[imgindex].substr(0, files[imgindex].length() - 4) + ".txt";
 		af.save_txt(newannopath);
 	}
 }
@@ -73,6 +75,7 @@ int main()
 {
 	DatasetConfig voc;
 //	showannotation(voc);
+    voc.init("E:/Detection/Datasets/ibm2017Q4");
 	convert2ssdannotation(voc);
 	return 0;
 }

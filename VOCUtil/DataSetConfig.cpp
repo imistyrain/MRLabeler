@@ -103,8 +103,9 @@ void DatasetConfig::initWithNames(const std::vector<std::string>&objnames)
 	}
 }
 
-int DatasetConfig::generatetrainvaltxt(const string datasetprefix, const float trainratio, const float valratio, const float testratio)
+int DatasetConfig::generatetrainvaltxt(const float trainratio, const float valratio, const float testratio)
 {
+	const string datasetprefix = datasetname+year;// "/home/yanhe/data/";
 	std::vector<std::vector<std::string>>filebylabels;
 	for (int i = 0; i < AnnotationFile::labelmap.size(); i++)
 	{
@@ -138,7 +139,7 @@ int DatasetConfig::generatetrainvaltxt(const string datasetprefix, const float t
 			shuffle(file1label.begin(), file1label.end(), std::default_random_engine(seed));
 			for (int j = 0; j < file1label.size(); j++)
 			{
-				string filepath = datasetprefix + datasetname + "/images/" + file1label[j];
+				string filepath = datasetprefix + "/"+ imagedir +"/" + file1label[j];
 				if (j < (trainratio + valratio)*file1label.size())
 				{
 					ftrainval << filepath << endl;

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="datagenerator.cpp" />
+    <ClCompile Include="..\VOCUtil\AnnotationFile.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VOCUtil\DataSetConfig.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VOCUtil\pugixml.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\VOCUtil\AnnotationFile.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\DataSetConfig.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\pugiconfig.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\pugixml.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="util">
+      <UniqueIdentifier>{ba25507b-2af0-4335-8b1d-be9c2cc22f10}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

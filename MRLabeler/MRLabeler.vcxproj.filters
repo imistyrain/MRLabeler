@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\VOCUtil\AnnotationFile.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VOCUtil\pugixml.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VOCUtil\DataSetConfig.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="TipListBox.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCLabeler.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCLabelerDlg.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorRectTracker.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\VOCUtil\AnnotationFile.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\pugiconfig.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\pugixml.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VOCUtil\DataSetConfig.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCLabeler.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCLabelerDlg.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorRectTracker.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="TipListBox.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="util">
+      <UniqueIdentifier>{450d2dec-5b9b-447d-a770-1c345cce5343}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{473a5344-c84a-4ef8-9ed3-48499c83d4dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header files">
+      <UniqueIdentifier>{2fa62f0d-ee94-4b86-a88c-daac4184b386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{b651f4bc-49c7-4108-a0c0-820b46eed15c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\MFCLabeler.ico">
+      <Filter>resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MFCLabeler.rc">
+      <Filter>resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MFCLabeler.rc2">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+</Project>

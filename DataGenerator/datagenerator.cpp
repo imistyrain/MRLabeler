@@ -803,6 +803,6 @@ int main()
 	init();
 //	generatefromvideos();
 	generatefromimages();//origimagedir
-	ds.generatetrainvaltxt(datasetprefix);
+	ds.generatetrainvaltxt();
 	return 0;
 }

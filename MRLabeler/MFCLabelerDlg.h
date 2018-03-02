@@ -10,14 +10,20 @@
 #include "vector"
 #include "afxwin.h"
 #include "ColorRectTracker.h"
+#include "TipListBox.h"
 #include "afxcmn.h"
 #include "string"
 // const std::string databasename = "Mobile2017";
 // const std::string rootdir = "../../Datasets";
-const std::string databasename = "Face2017";
+//const std::string databasename = "Face2017";
+const std::string databasename = "CK2018";
 const std::string rootdir = "./";
+//const std::string rootdir = "C:/Users/yanhe.gong/Desktop";
 // const std::string databasename = "WiderFace";
 // const std::string rootdir = "D:/Face/Datasets/";
+//const std::string databasedir = "E:/Detection/Datasets/ibm2017Q4";
+//const std::string databasedir = "../bin/Face2017";
+
 const std::string databasedir = rootdir + "/" + databasename;
 
 class CRelativeRect
@@ -92,15 +98,13 @@ public:
 	afx_msg void OnBnClickedButtonNext();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnBnClickedButtonAddrectangle();
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnCbnSelchangeComboClassnames();
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	CListBox m_listfiles;
+	CTipListBox m_listfiles;
 	afx_msg void OnLbnDblclkListFiles();
 	afx_msg void OnLbnSelchangeListFiles();
 	afx_msg void OnClose();

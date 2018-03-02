@@ -74,10 +74,9 @@ BEGIN_MESSAGE_MAP(CMFCLabelerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CMFCLabelerDlg::OnBnClickedButtonNext)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
-	ON_WM_LBUTTONUP()
+//	ON_WM_LBUTTONUP()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
-	ON_BN_CLICKED(IDC_BUTTON_ADDRECTANGLE, &CMFCLabelerDlg::OnBnClickedButtonAddrectangle)
 	ON_WM_SETCURSOR()
 	ON_CBN_SELCHANGE(IDC_COMBO_CLASSNAMES, &CMFCLabelerDlg::OnCbnSelchangeComboClassnames)
 	ON_WM_MOUSEWHEEL()
@@ -146,9 +145,9 @@ void CMFCLabelerDlg::Init(const string dir)
 		auto str = ANSIToUnicode(voc.classes[i].c_str());
 		m_comboxclassnames.AddString(str);
 	}
-	m_comboxclassnames.SetCurSel(m_imgindex);
-	if (voc.classes.size()>0)
-		m_currentselectedclassname = ANSIToUnicode(voc.classes[0].c_str());
+	m_comboxclassnames.SetCurSel(voc.lastlabeledindex);
+	if (voc.classes.size()>0&& voc.lastlabeledindex>=0&& voc.lastlabeledindex<voc.classes.size())
+		m_currentselectedclassname = ANSIToUnicode(voc.classes[voc.lastlabeledindex].c_str());
 	m_imgdir = voc.datasetdir + "/" + voc.imagedir;
 	m_files = getAllFilesinDir(m_imgdir);
 	InitFileListBox();
@@ -270,10 +269,20 @@ void CMFCLabelerDlg::OnBnClickedButtonPrev()
 
 void CMFCLabelerDlg::CheckAndSaveAnnotation()
 {
-	if (m_bSaveEdit&&m_bModified)
+	if (m_files.size() > 0)
 	{
-		string annotationname =  m_files[m_imgindex].substr(0,m_files[m_imgindex].length()-4);
-		SaveAnnotationFile(annotationname);
+		string annotationname = m_files[m_imgindex].substr(0, m_files[m_imgindex].length() - 4);
+		if (m_bSaveEdit&&m_bModified)
+		{
+			SaveAnnotationFile(annotationname);
+		}
+		if (m_relrects.size() == 0)
+		{
+			string annotationpath = voc.datasetdir + "/" + voc.annotationdir + "/" + annotationname + ".xml";
+			string labelpath = voc.datasetdir + "/" + voc.labelsdir + "/" + annotationname + ".txt";
+			remove(annotationpath.c_str());
+			remove(labelpath.c_str());
+		}
 	}
 	m_bModified = false;
 }
@@ -338,6 +347,7 @@ void CMFCLabelerDlg::OnLButtonDown(UINT nFlags, CPoint point)
 				m_relrects.push_back(rr);
 				UpdateView();
 				m_bDragMode = true;
+				m_bModified = true;
 				return;
 			}
 		}
@@ -353,11 +363,6 @@ void CMFCLabelerDlg::OnMouseMove(UINT nFlags, CPoint point)
 		GetDlgItem(IDC_POS)->SetWindowText(str);
 	}
 	CDialogEx::OnMouseMove(nFlags, point);
-}
-void CMFCLabelerDlg::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	// TODO:  在此添加消息处理程序代码和/或调用默认值
-	CDialogEx::OnLButtonUp(nFlags, point);
 }
 void CMFCLabelerDlg::ResizeBottomButton(int nID)
 {
@@ -415,7 +420,6 @@ void CMFCLabelerDlg::OnSize(UINT nType, int cx, int cy)
 	if (GetDlgItem(IDC_PIC) == NULL)return;
  	GetClientRect(&dlg_rect);
 	ResizeBottomButton(IDC_BUTTON_OPEN);
-	ResizeBottomButton(IDC_BUTTON_ADDRECTANGLE);
 	ResizeBottomStatic(IDC_COMBO_CLASSNAMES);
 	ResizeBottomButton(IDC_BUTTON_PREV);
 	ResizeBottomButton(IDC_BUTTON_NEXT);
@@ -447,20 +451,31 @@ void CMFCLabelerDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 BOOL CMFCLabelerDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO:  在此添加专用代码和/或调用基类
-	if (pMsg->message == WM_KEYUP&&pMsg->wParam == VK_DELETE)
+	if (pMsg->message == WM_KEYUP)
 	{
-		if (m_trackers.size() > 0)
+		switch (pMsg->wParam)
 		{
-			m_bModified = true;
-			m_trackers.pop_back();
-			m_relrects.pop_back();
-			UpdateView();
+		case VK_SHIFT:
+			m_bDragMode = !m_bDragMode;
+			return 0;
+			break;
+		case VK_DELETE:
+			if (m_trackers.size() > 0)
+			{
+				m_bModified = true;
+				m_trackers.pop_back();
+				m_relrects.pop_back();
+				UpdateView();
+			}
+			if (m_trackers.size() == 0)
+				m_bDragMode = false;
+			return 0;
+			break;
+		default:
+			break;
 		}
-		if (m_trackers.size() == 0)
-			m_bDragMode = false;
-		return 0;
 	}
-	if (WM_KEYDOWN == pMsg->message && VK_RETURN == pMsg->wParam)
+	if (pMsg->message == WM_KEYDOWN && VK_RETURN == pMsg->wParam)
 	{
 		if (GetFocus() == GetDlgItem(IDC_EDIT1))
 		{
@@ -480,12 +495,6 @@ void CMFCLabelerDlg::UpdateView()
 		Invalidate(FALSE);
 	else
 		Invalidate();
-}
-
-void CMFCLabelerDlg::OnBnClickedButtonAddrectangle()
-{
-	// TODO:  在此添加控件通知处理程序代码
-	m_bDragMode = false;
 }
 
 BOOL CMFCLabelerDlg::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
