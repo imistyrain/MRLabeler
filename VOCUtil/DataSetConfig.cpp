@@ -4,6 +4,7 @@
 #include "fstream"
 #include "mrdir.h"
 #include "random"
+#include "set"
 #include <chrono>
 #include "AnnotationFile.h"
 int DatasetConfig::load_file(const string configpath)
@@ -103,7 +104,7 @@ void DatasetConfig::initWithNames(const std::vector<std::string>&objnames)
 	}
 }
 
-int DatasetConfig::generatetrainvaltxt(const float trainratio, const float valratio, const float testratio)
+int DatasetConfig::generatetrainvaltxtbyclass(const float trainratio, const float valratio, const float testratio)
 {
 	const string datasetprefix = datasetname+year;// "/home/yanhe/data/";
 	std::vector<std::vector<std::string>>filebylabels;
@@ -193,6 +194,88 @@ int DatasetConfig::generatetrainvaltxt(const float trainratio, const float valra
 					ftest << filepath << endl;
 				}
 			}
+		}
+		ftrain.close();
+		fval.close();
+		ftrainval.close();
+		ftest.close();
+	}
+	return 0;
+}
+
+int DatasetConfig::generatetrainvaltxt(const float trainratio, const float valratio, const float testratio)
+{
+	const string datasetprefix = datasetname + year;
+	std::string imgdir = datasetdir + "/" + imagedir;
+	string annodir = datasetdir + "/" + annotationdir;
+	std::vector<std::string>files;
+	auto imgfiles = getAllFilesinDir(imgdir);
+	for (int i = 0; i < imgfiles.size(); i++)
+	{
+		std::string annopath = annodir + "/" + imgfiles[i];
+		annopath = annopath.substr(0, annopath.length() - 3) + "xml";
+		if(EXISTS(annopath.c_str()))
+			files.push_back(imgfiles[i]);
+	}
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	shuffle(files.begin(), files.end(), std::default_random_engine(seed));
+	if (bsavetxt)
+	{
+		ofstream ftrainval(datasetdir + "/trainval.txt");
+		ofstream ftest(datasetdir + "/test.txt");
+		int count = 0;
+		for (auto it=files.begin();it!=files.end();it++)
+		{
+			string filepath = datasetprefix + "/" + imagedir + "/" + *it;
+			if (count < (trainratio + valratio)*files.size())
+			{
+				ftrainval << filepath << endl;
+			}
+			else if (count< (trainratio + valratio + testratio)*files.size())
+			{
+				ftest << filepath << endl;
+			}
+			count++;
+		}
+		ftrainval.close();
+		ftest.close();
+	}
+	if (bsavexml)
+	{
+		std::string imagesetsdir = datasetdir + "/" + "ImageSets";
+		if (!EXISTS(imagesetsdir.c_str()))
+		{
+			MKDIR(imagesetsdir.c_str());
+		}
+		std::string maindir = imagesetsdir + "/" + "Main";
+		if (!EXISTS(maindir.c_str()))
+		{
+			MKDIR(maindir.c_str());
+		}
+		ofstream ftrain(maindir + "/train.txt");
+		ofstream fval(maindir + "/val.txt");
+		ofstream ftrainval(maindir + "/trainval.txt");
+		ofstream ftest(maindir + "/test.txt");
+		int count = 0;
+		for (auto it = files.begin(); it != files.end(); it++)
+		{
+			string filepath = *it;
+			filepath=filepath.substr(0, filepath.length() - 4);
+			if (count< trainratio*files.size())
+			{
+				ftrain << filepath << endl;
+				ftrainval << filepath << endl;
+			}
+			else if (count < (trainratio + valratio)*files.size())
+			{
+				fval << filepath << endl;
+				ftrainval << filepath << endl;
+			}
+			else if (count < (trainratio + valratio + testratio)*files.size())
+			{
+				ftest << filepath << endl;
+			}
+			count++;
 		}
 		ftrain.close();
 		fval.close();

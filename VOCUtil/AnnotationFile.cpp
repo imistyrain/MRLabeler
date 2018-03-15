@@ -36,6 +36,14 @@ bool AnnotationFile::load_xml(const string annotationfilepath)
 		object.ymin = bndboxnode.child("ymin").text().as_int();
 		object.xmax = bndboxnode.child("xmax").text().as_int();
 		object.ymax = bndboxnode.child("ymax").text().as_int();
+		if (object.xmin < 0)
+			object.xmin = 0;
+		if (object.ymin < 0)
+			object.ymin < 0;
+		if (object.xmax >= width - 1)
+			object.xmax = width - 1;
+		if (object.ymax >= height - 1)
+			object.ymax = height - 1;
 		object.truncated = objectnode.child("truncated").text().as_bool();
 		object.difficult = objectnode.child("difficult").text().as_bool();
 		objects.push_back(object);
