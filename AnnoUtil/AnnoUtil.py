@@ -134,6 +134,25 @@ def filtererrors(args):
         print(e)
     print("checking done")
 
+def get_random_color(pastel_factor = 0.5):
+    return [256*(x+pastel_factor)/(1.0+pastel_factor) for x in [random.uniform(0,1.0) for i in [1,2,3]]]
+
+def color_distance(c1,c2):
+    return sum([abs(x[0]-x[1]) for x in zip(c1,c2)])
+
+def generate_new_color(existing_colors,pastel_factor = 0.5):
+    max_distance = None
+    best_color = None
+    for i in range(0,100):
+        color = get_random_color(pastel_factor = pastel_factor)
+        if not existing_colors:
+            return color
+        best_distance = min([color_distance(color,c) for c in existing_colors])
+        if not max_distance or best_distance > max_distance:
+            max_distance = best_distance
+            best_color = color
+    return best_color
+
 #get all annotation labels and distribution
 def get_all_labels(args):
     print("get all label distributions")
@@ -146,6 +165,7 @@ def get_all_labels(args):
     files=os.listdir(Annotation_dir)
     labeldistributions={}
     total=0
+    colors=dict()
     #for file in files:
     for file in tqdm(files):
         annopath=Annotation_dir+"/"+file
@@ -158,6 +178,7 @@ def get_all_labels(args):
             if image is None:
                 continue
         names=set()
+        objs=dict()
         for i in range(len(objects)):
             total=total+1
             name=objects[i].find("name").text
@@ -166,22 +187,58 @@ def get_all_labels(args):
                 labeldistributions[name]=labeldistributions[name]+1
             else:
                 labeldistributions[name]=1
-            if args.show_annotations or args.save_gt:
-                bndbox=objects[i].find("bndbox")
-                rect=[]
-                for i in range(len(bndbox)):
-                    rect.append(float(bndbox[i].text))
-                if args.show_annotations or args.save_gt:
-                    cv2.rectangle(image,(int(rect[0]),int(rect[1])),(int(rect[2]),int(rect[3])),(255,0,0))
-                    cv2.putText(image,name,(int(rect[0]),int(rect[1])),3,1,(0,255,0))
-        if args.save_gt:
-            if args.save_classified:
-                for name in names:
-                    save_class_dir=gt_dir+"/"+name
-                    mkr(save_class_dir)
-                    gt_path=save_class_dir+"/"+imgfilename
-                    cv2.imwrite(gt_path,image)
+            rect=list()
+            bndbox=objects[i].find("bndbox")
+            for i in range(len(bndbox)):
+                rect.append(float(bndbox[i].text))
+            if name in objs:
+                objs[name].append(rect)
             else:
+                objs[name]=list()
+                objs[name].append(rect)
+        if args.show_annotations or args.save_gt:
+            for name in names:
+                if name in colors:
+                    color=colors[name]
+                else:
+                    colors[name]=generate_new_color(None,pastel_factor = 0.9)
+                color=colors[name]
+            if args.save_classified:
+                if args.show_alllabels:
+                    for name in names:
+                        for rect in objs[name]:
+                            cv2.rectangle(image,(int(rect[0]),int(rect[1])),(int(rect[2]),int(rect[3])),color)
+                            if rect[1]<20:
+                                cv2.putText(image,name,(int(rect[0]),20),1,1,color)
+                            else:
+                                cv2.putText(image,name,(int(rect[0]),int(rect[1])),3,1,color)
+                    for name in names:    
+                        save_class_dir=gt_dir+"/"+name
+                        mkr(save_class_dir)
+                        gt_path=save_class_dir+"/"+imgfilename
+                        cv2.imwrite(gt_path,image)
+                else:
+                    for name in names:
+                        show=image.copy()
+                        for rect in objs[name]:
+                            if rect[1]<20:
+                                cv2.putText(show,name,(int(rect[0]),20),1,1,color)
+                            else:
+                                cv2.putText(show,name,(int(rect[0]),int(rect[1])),3,1,color)
+                            cv2.rectangle(show,(int(rect[0]),int(rect[1])),(int(rect[2]),int(rect[3])),color)
+                            save_class_dir=gt_dir+"/"+name
+                            mkr(save_class_dir)
+                            gt_path=save_class_dir+"/"+imgfilename
+                            cv2.imwrite(gt_path,show)
+         
+            else:
+                for name in names:
+                    for rect in objs[name]:
+                        if rect[1]<20.0:
+                            cv2.putText(image,name,(int(rect[0]),20),1,1,color)
+                        else:
+                            cv2.putText(image,name,(int(rect[0]),int(rect[1])),3,1,color)
+                        cv2.rectangle(image,(int(rect[0]),int(rect[1])),(int(rect[2]),int(rect[3])),color)
                 gt_path=gt_dir+"/"+imgfilename
                 cv2.imwrite(gt_path,image)
         if args.show_annotations:
@@ -275,7 +332,8 @@ def remove_files_not_in_gt(args):
     img_dir=args.dataset_dir+"/"+args.images_dir
     annodir=args.dataset_dir+"/"+args.annos_dir
     gtdir=args.dataset_dir+"/"+args.gt_dir
-    all_files=get_reserve_list(gtdir)
+    #all_files=get_reserve_list(gtdir)
+    all_files=os.listdir(gtdir)
     removeddir="removed"
     mkr(removeddir)
     remove_file_in_dir(img_dir,removeddir,all_files)
@@ -288,16 +346,19 @@ def get_args():
     #设置数据集的文件夹所在目录
     parser.add_argument('--dataset_dir', type=str,help='Path to the data directory of dataset.',
                         default=
-                        #"D:/Detection/Datasets/voc/VOCdevkit/VOC2007"
+                        #"E:/Detection/Datasets/voc/VOCdevkit/VOC2007"
                         "D:/Detection/CKdemo/CK2018"
                         )
     parser.add_argument('--show_annotations', type=bool,help='show annotations on label analysis',default=False)
-
+    parser.add_argument('--show_alllabels', type=bool,help='whether show all labels',default=False)
     parser.add_argument('--save_gt', type=bool,help='classified show gt',default=True)
     parser.add_argument('--gt_dir', type=str,help='gt dir',default="gt")
     parser.add_argument('--save_classified', type=bool,help='classified show gt',default=True)
 
-    parser.add_argument('--images_dir', type=str,help='dataset image file dir',default="images")
+    parser.add_argument('--images_dir', type=str,help='dataset image file dir',default=
+                        "images"
+                        #"JPEGImages"
+                        )
     parser.add_argument('--annos_dir', type=str,help='annotations dir',default="Annotations")
     parser.add_argument('--ext', type=str,help='dataset image file extention',default=".jpg")
 
