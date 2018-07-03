@@ -16,15 +16,15 @@
 // const std::string databasename = "Mobile2017";
 // const std::string rootdir = "../../Datasets";
 //const std::string databasename = "Face2017";
-const std::string databasename = "CK2018";
-const std::string rootdir = "./";
+//const std::string databasename = "CK2018";
+//const std::string rootdir = "./";
 //const std::string rootdir = "C:/Users/yanhe.gong/Desktop";
 // const std::string databasename = "WiderFace";
 // const std::string rootdir = "D:/Face/Datasets/";
 //const std::string databasedir = "E:/Detection/Datasets/ibm2017Q4";
-//const std::string databasedir = "../bin/Face2017";
+const std::string databasedir = "../bin/Face2017";
 
-const std::string databasedir = rootdir + "/" + databasename;
+//const std::string databasedir = rootdir + "/" + databasename;
 
 class CRelativeRect
 {

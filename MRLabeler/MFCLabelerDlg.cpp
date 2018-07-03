@@ -314,17 +314,28 @@ void CMFCLabelerDlg::OnLButtonDown(UINT nFlags, CPoint point)
 		tracker.m_nStyle = CRectTracker::dottedLine | CRectTracker::resizeInside;
 		tracker.TrackRubberBand(this, point, TRUE);
 		tracker.m_rect.NormalizeRect();
-		CClientDC dc(this);
-		tracker.Draw(&dc);
-		m_trackers.push_back(tracker);
-		CRelativeRect rr;
-		rr.strName = tracker.m_strName;
-		rr.ptStart.x = tracker.m_rect.left*1.0 / m_Picrect.Width();
-		rr.ptStart.y = tracker.m_rect.top*1.0 / m_Picrect.Height();
-		rr.ptEnd.x = tracker.m_rect.right*1.0 / m_Picrect.Width();
-		rr.ptEnd.y = tracker.m_rect.bottom*1.0 / m_Picrect.Height();
-		m_relrects.push_back(rr);
-		m_bDragMode = true;
+        if (tracker.m_rect.left < m_Picrect.right&&tracker.m_rect.top < m_Picrect.bottom)
+        {
+            if (tracker.m_rect.left < 0)
+                tracker.m_rect.left = 0;
+            if (tracker.m_rect.top < 0)
+                tracker.m_rect.top = 0;
+            if (tracker.m_rect.right > m_Picrect.right)
+                tracker.m_rect.right = m_Picrect.right;
+            if (tracker.m_rect.bottom > m_Picrect.bottom)
+                tracker.m_rect.bottom = m_Picrect.bottom;
+            CClientDC dc(this);
+            tracker.Draw(&dc);
+            m_trackers.push_back(tracker);
+            CRelativeRect rr;
+            rr.strName = tracker.m_strName;
+            rr.ptStart.x = tracker.m_rect.left*1.0 / m_Picrect.Width();
+            rr.ptStart.y = tracker.m_rect.top*1.0 / m_Picrect.Height();
+            rr.ptEnd.x = tracker.m_rect.right*1.0 / m_Picrect.Width();
+            rr.ptEnd.y = tracker.m_rect.bottom*1.0 / m_Picrect.Height();
+            m_relrects.push_back(rr);
+            m_bDragMode = true;
+        }	
 	}
 	else
 	{

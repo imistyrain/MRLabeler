@@ -219,6 +219,7 @@ def get_all_labels(args):
                         cv2.imwrite(gt_path,image)
                 else:
                     for name in names:
+                        color=colors[name]
                         show=image.copy()
                         for rect in objs[name]:
                             if rect[1]<20:
@@ -233,6 +234,7 @@ def get_all_labels(args):
          
             else:
                 for name in names:
+                    color=colors[name]
                     for rect in objs[name]:
                         if rect[1]<20.0:
                             cv2.putText(image,name,(int(rect[0]),20),1,1,color)
@@ -350,10 +352,10 @@ def get_args():
                         "D:/Detection/CKdemo/CK2018"
                         )
     parser.add_argument('--show_annotations', type=bool,help='show annotations on label analysis',default=False)
-    parser.add_argument('--show_alllabels', type=bool,help='whether show all labels',default=False)
+    parser.add_argument('--show_alllabels', type=bool,help='whether show all labels',default=True)
     parser.add_argument('--save_gt', type=bool,help='classified show gt',default=True)
     parser.add_argument('--gt_dir', type=str,help='gt dir',default="gt")
-    parser.add_argument('--save_classified', type=bool,help='classified show gt',default=True)
+    parser.add_argument('--save_classified', type=bool,help='classified show gt',default=False)
 
     parser.add_argument('--images_dir', type=str,help='dataset image file dir',default=
                         "images"
