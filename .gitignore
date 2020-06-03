@@ -1,0 +1,12 @@
+﻿bin/
+.vs/
+Debug/
+Release/
+x64/
+MRFacelabeler/
+MRLabeler/Debug/
+MRLabeler/Release/
+MRLabeler/x64/
+VOC2YOLOConverter/x64/
+MRLabeler使用说明.docx
+clean.bat
